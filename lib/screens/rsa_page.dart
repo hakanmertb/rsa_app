@@ -21,6 +21,21 @@ class _RSAPageState extends State<RSAPage> {
   String _outputPreview = '';
   bool _isProcessed = false;
   bool _isEncrypted = false;
+  Map<String, int> _publicKey = {};
+  Map<String, int> _privateKey = {};
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeKeys();
+  }
+
+  void _initializeKeys() {
+    setState(() {
+      _publicKey = _rsaService.publicKey;
+      _privateKey = _rsaService.privateKey;
+    });
+  }
 
   Future<void> _selectFile() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
@@ -123,6 +138,8 @@ class _RSAPageState extends State<RSAPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            _buildKeyDisplay(),
+            const SizedBox(height: 20),
             Container(
               decoration: BoxDecoration(
                 color: CupertinoColors.white,
@@ -252,6 +269,40 @@ class _RSAPageState extends State<RSAPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildKeyDisplay() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: CupertinoColors.systemGrey4),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'RSA Anahtarları',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          const SizedBox(height: 8),
+          Text(
+            'Public Key:',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          Text('e: ${_publicKey['e']}'),
+          Text('n: ${_publicKey['n']}'),
+          const SizedBox(height: 8),
+          Text(
+            'Private Key:',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          Text('d: ${_privateKey['d']}'),
+          Text('n: ${_privateKey['n']}'),
+        ],
       ),
     );
   }
